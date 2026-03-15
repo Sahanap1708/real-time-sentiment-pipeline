@@ -314,7 +314,4 @@ Future Enhancements
 
 ---
 
-Author
 
-Samagna Pinnamreddy
-Data Engineering Project – Real-Time Social Media Sentiment Analysis
