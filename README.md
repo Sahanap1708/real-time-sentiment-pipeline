@@ -51,7 +51,7 @@ The pipeline integrates:
 
 ### End-to-End Architecture
 
-![Architecture Diagram](Dashboard/images/final-arch.png)
+![Architecture Diagram](Dashboard/images/architecture.png)
 
 ---
 
@@ -272,7 +272,9 @@ This project is for **educational and research purposes**.
 ## Author
 
 Project Lead
+
 Sahana P
+
 
 Team Members
 
