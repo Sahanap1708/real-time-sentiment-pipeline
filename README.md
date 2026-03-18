@@ -42,7 +42,9 @@ The pipeline integrates AWS services, Databricks processing, and DBT analytics m
 
 End-to-End System Architecture
 
-![image_1773811876929.png](./image_1773811876929.png "image_1773811876929.png")
+## 🏗️ End-to-End Architecture
+
+![Architecture Diagram](Dashboard/images/final-arch.png)
 
 
 ---
@@ -189,6 +191,7 @@ Real-Time-Social-Media-Sentiment-Analysis-Pipeline/
 │
 ├── Dashboard/
 │ └── images/
+│ ├── architecture_diagram.png
 │ ├── tweet_dashboard.png
 │ ├── sentiment_dashboard.png
 │ ├── trend_dashboard.png
