@@ -170,30 +170,30 @@ Project Folder Structure
 Real-Time-Social-Media-Sentiment-Analysis-Pipeline/
 │
 ├── Datasets/
-│   └── raw_data/
+│ └── raw_data/
 │
 ├── Development/
-│   ├── bronze/
-│   │   ├── bronze_code.py
-│   │
-│   ├── silver/
-│   │   ├── silver_code.py
-│   │
-│   ├── gold/
-│   │   ├── gold_code.py
-│   │
-│   ├── DAG/
-│   │   ├── dag_code.py
-│   
-├── testing/
-│   ├── test_bronze.py
-│   ├── test_silver.py
-│   ├── test_gold.py
+│ ├── bronze/
+│ │ └── bronze_code.py
+│ ├── silver/
+│ │ └── silver_code.py
+│ ├── gold/
+│ │ └── gold_code.py
+│ └── DAG/
+│ └── dag_code.py
 │
+├── Testing/
+│ ├── test_bronze.py
+│ ├── test_silver.py
+│ └── test_gold.py
 │
 ├── Dashboard/
-│   ├── My_Dashboard.pdf
-│   └── images/
+│ └── images/
+│ ├── tweet_dashboard.png
+│ ├── sentiment_dashboard.png
+│ ├── trend_dashboard.png
+│ ├── users_influence_dashboard.png
+│ └── overview_dashboard.png
 │
 └── README.md
 
@@ -262,23 +262,29 @@ This section contains dashboards generated from the Gold layer dataset.
 
 Tweet Activity
 Analyzes tweet activity patterns across hourly, daily, and weekly dimensions including impressions, engagement mix, and total vs valid tweet volume.
-C:\Users\welcome\Desktop\Realtime-sentimental\Dashboard\images\tweet_dashboard.png
+### Tweet Activity
+![Tweet Dashboard](Dashboard/images/tweet_dashboard.png)
 
 Sentiment analysis
 Examines dominant sentiment distribution and score trends across key topics — AI, Cloud, Finance, and Sports.
-C:\Users\welcome\Desktop\Realtime-sentimental\Dashboard\images\sentiment_dashboard.png
+### Sentiment Analysis
+![Sentiment Dashboard](Dashboard/images/sentiment_dashboard.png)
+
 
 Trend analysis
 Tracks tweet trend strength categories, sentiment index, and volume patterns across multiple countries over time.
-C:\Users\welcome\Desktop\Realtime-sentimental\Dashboard\images\trend_dashboard.png
+### Trend Analysis
+![Trend Dashboard](Dashboard/images/trend_dashboard.png)
 
 Users and influence
 Analyzes user demographics, follower segments, influence score distribution, and engagement behavior across countries.
-C:\Users\welcome\Desktop\Realtime-sentimental\Dashboard\images\users_influence_dashboard.png
+### Users & Influence
+![Users Dashboard](Dashboard/images/users_influence_dashboard.png)
 
 Overview
 Provides a high-level summary of tweet volume, user distribution, sentiment breakdown, engagement trends, and top topics for Jan 2025.
-C:\Users\welcome\Desktop\Realtime-sentimental\Dashboard\images\overview_dashboard.png
+### Overview
+![Overview Dashboard](Dashboard/images/overview_dashboard.png)
 
 ---
 
