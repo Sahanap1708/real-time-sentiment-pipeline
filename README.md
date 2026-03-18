@@ -262,23 +262,23 @@ This section contains dashboards generated from the Gold layer dataset.
 
 Tweet Activity
 Analyzes tweet activity patterns across hourly, daily, and weekly dimensions including impressions, engagement mix, and total vs valid tweet volume.
-![tweet_dashboard_1773817788811.png](./tweet_dashboard_1773817788811.png "tweet_dashboard_1773817788811.png")
+C:\Users\welcome\Desktop\Realtime-sentimental\Dashboard\images\tweet_dashboard.png
 
 Sentiment analysis
 Examines dominant sentiment distribution and score trends across key topics — AI, Cloud, Finance, and Sports.
-![sentiment_dashboard_1773817814834.png](./sentiment_dashboard_1773817814834.png "sentiment_dashboard_1773817814834.png")
+C:\Users\welcome\Desktop\Realtime-sentimental\Dashboard\images\sentiment_dashboard.png
 
 Trend analysis
 Tracks tweet trend strength categories, sentiment index, and volume patterns across multiple countries over time.
-![trend_dashboard_1773817968989.png](./trend_dashboard_1773817968989.png "trend_dashboard_1773817968989.png")
+C:\Users\welcome\Desktop\Realtime-sentimental\Dashboard\images\trend_dashboard.png
 
 Users and influence
 Analyzes user demographics, follower segments, influence score distribution, and engagement behavior across countries.
-![users_influence_dashboard_1773818256494.png](./users_influence_dashboard_1773818256494.png "users_influence_dashboard_1773818256494.png")
+C:\Users\welcome\Desktop\Realtime-sentimental\Dashboard\images\users_influence_dashboard.png
 
 Overview
 Provides a high-level summary of tweet volume, user distribution, sentiment breakdown, engagement trends, and top topics for Jan 2025.
-![overview_dashboard_1773818581492.png](./overview_dashboard_1773818581492.png "overview_dashboard_1773818581492.png")
+C:\Users\welcome\Desktop\Realtime-sentimental\Dashboard\images\overview_dashboard.png
 
 ---
 
