@@ -51,7 +51,7 @@ The pipeline integrates:
 
 ### End-to-End Architecture
 
-![Architecture Diagram](C:\Users\welcome\Desktop\Realtime-sentimental\Dashboard\images\End-to-end ETL architecture infographic.png)
+![Architecture Diagram](Dashboard/images/final-arch.png)
 
 ---
 
