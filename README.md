@@ -1,175 +1,144 @@
-Real-Time Social Media Analytics Pipeline (Databricks + PySpark)
-
-Project Overview
-
-This project implements an end-to-end analytics pipeline for social media data using AWS, Databricks, PySpark, Delta Lake, and Apache Airflow.
-
-The pipeline processes raw social media datasets and transforms them into analytics-ready datasets using the Medallion Architecture (Bronze → Silver → Gold).
-
-The final output enables social media analytics and business intelligence by generating aggregated metrics such as:
-
-- Sentiment trend analysis (Positive / Negative / Neutral)
-- User influence rankings by engagement score
-- Topic performance insights (AI, Sports, Finance, Cloud)
-- Geographic trend analysis by country
-- Valid vs invalid tweet distribution
-- Daily and hourly tweet activity patterns
+# Real-Time Social Media Analytics Pipeline (Databricks + PySpark)
 
 ---
 
-Dataset
+## Project Overview
 
-Dataset Source
+This project implements an **end-to-end data pipeline** for social media analytics using:
 
-AWS S3 Bucket — realtime-parquetfiles (eu-north-1)
-Registered via AWS Glue catalog database: realtime_tweets
+**AWS • Databricks • PySpark • Delta Lake • Apache Airflow**
 
-Datasets Used
+The pipeline follows the **Medallion Architecture (Bronze → Silver → Gold)** to transform raw data into **analytics-ready datasets**.
 
-tweets_tb       → Raw tweet content and engagement metrics
-sentiment_tb    → Sentiment scores per tweet
-trends_tb       → Trending topic data by country
-user_metadata_tb → User profile and follower data
-valid_tb        → Validated and quality-checked tweets
+### Key Business Outputs
 
-These datasets simulate a real-world social media analytics environment with 50,500 records per source table.
-
-Kinesis streams
-
-Project Architecture(Lakehouse Architecture)
-
-The pipeline integrates AWS services, Databricks processing, and DBT analytics modeling.
-
-End-to-End System Architecture
-
-## 🏗️ End-to-End Architecture
-
-![Architecture Diagram](Dashboard/images/final-arch.png)
-
+* **Sentiment trend analysis** (Positive / Negative / Neutral)
+* **User influence rankings** based on engagement score
+* **Topic performance insights** (AI, Sports, Finance, Cloud)
+* **Geographic trend analysis** by country
+* **Valid vs invalid tweet distribution**
+* **Daily & hourly tweet activity patterns**
 
 ---
 
-Medallion Architecture Layers
+## Dataset
 
-Bronze Layer (Raw Data)
+### Source
 
-Purpose
-- Store raw data exactly as received from S3
-- Preserve data lineage
-- Enable traceability of raw ingestion
+* **AWS S3 Bucket** — `realtime-parquetfiles (eu-north-1)`
+* Registered via **AWS Glue Catalog** → `realtime_tweets`
 
-Tables
-- social_catalog.bronze.tweets_table
-- social_catalog.bronze.sentiment_table
-- social_catalog.bronze.trends_table
-- social_catalog.bronze.user_metadata_table
-- social_catalog.bronze.valid_table
+### Tables Used
 
-Operations
-- Raw Parquet ingestion from AWS S3 using recursiveFileLookup
-- Schema validation during ingestion
-- Metadata registration via AWS Glue
-- Adds ingested_at timestamp to all records
+* `tweets_tb` → Raw tweet content
+* `sentiment_tb` → Sentiment scores
+* `trends_tb` → Trending topics
+* `user_metadata_tb` → User data
+* `valid_tb` → Validated tweets
+
+Each dataset contains **~50,500 records**
 
 ---
 
-Silver Layer (Cleaned Data)
+## Lakehouse Architecture
 
-Purpose
-- Clean and standardize all datasets
-- Fill null values instead of dropping rows
-- Ensure 40,000+ records per table for analytics
+The pipeline integrates:
 
-Transformations
-- Parse timestamps using dd-MM-yyyy HH:mm format
-- Trim whitespace from all string columns
-- Fill numeric nulls with column-level averages from Bronze
-- Fill topic_category nulls by hash-based assignment from AI, Sports, Finance, Cloud
-- Fill country nulls by hash-based assignment from USA, UK, India, Germany, Canada
-- Rename mistyped column topic_catagory to topic_category
-- Remove exact full-row duplicates using dropDuplicates
+* **AWS (S3, Glue)**
+* **Databricks (Processing)**
+* **Delta Lake**
+* **Airflow (Orchestration)**
 
-Output Tables
+### End-to-End Architecture
 
-- social_catalog.silver.tweets_table         → 47,527 rows
-- social_catalog.silver.sentiment_table      → 47,537 rows
-- social_catalog.silver.trends_table         → 47,463 rows
-- social_catalog.silver.user_metadata_table  → 47,491 rows
-- social_catalog.silver.valid_table          → 47,526 rows
+![Architecture Diagram](C:\Users\welcome\Desktop\Realtime-sentimental\Dashboard\images\End-to-end ETL architecture infographic.png)
 
 ---
 
-Gold Layer (Analytics Data)
+## Medallion Architecture Layers
 
-Purpose
-Generate business-ready datasets for dashboards and BI reporting.
+### Bronze Layer (Raw Data)
 
-Dimension Tables
-- dim_topic      → 4 unique topic categories
-- dim_country    → 5 unique countries
-- dim_user       → All users with follower segments and account age
+**Purpose**
 
-Fact Tables
-- fact_tweet     → Merged tweets and valid table with sentiment scores (95,000+ rows)
-- fact_trend     → All trends with strength and country rank (47,463 rows)
+* Store raw data from S3
+* Maintain **data lineage**
+* Enable **traceability**
 
-Aggregation Tables
-- agg_sentiment_by_topic  → Sentiment grouped by topic, date, and hour
-- agg_user_influence      → User influence scores with global and country rank
+**Operations**
 
-Metrics Tables
-- tweet_metrics            → Total tweets, avg likes, avg retweets
-- tweets_per_day           → Tweet count grouped by date
-- tweets_per_hour          → Tweet count grouped by hour
-- sentiment_metrics        → Positive, Negative, Neutral counts and percentages
-- sentiment_over_time      → Daily sentiment trend per topic and hour
-- trend_metrics            → Top countries by tweet volume
-- trend_over_time          → Trend score over time per country
-- user_metrics             → Total users, avg followers, avg following
-- top_users_by_followers   → Top 10,000 users by follower count
-- user_creation_trend      → New users per day per country
-- users_by_country         → User stats grouped by country and topic
-- valid_tweet_metrics      → Valid vs invalid tweet ratio
-- valid_tweets_per_day     → Valid tweet count per day and hour
-- valid_tweets_per_topic   → Valid tweet count per topic per day
+* Parquet ingestion from **AWS S3**
+* Schema validation
+* Metadata via **AWS Glue**
+* Add `ingested_at` timestamp
 
 ---
 
-Airflow (Pipeline Orchestration)
+### Silver Layer (Cleaned Data)
 
-The pipeline is orchestrated using Apache Airflow DAGs.
+**Purpose**
 
-Airflow DAG Tasks
-- Task 1: Bronze Ingestion
-- Task 2: Silver Transformation
-- Task 3: Gold Aggregation
+* Clean and standardize datasets
+* Handle missing values
+* Ensure **analytics-ready quality**
 
-Scheduling
-Pipelines run on a daily schedule at midnight for automated data processing.
+**Transformations**
 
----
+* Timestamp parsing
+* Null handling using averages
+* Column cleaning
+* Duplicate removal
+* Data enrichment (topic & country filling)
 
-Data Quality Checks
-
-Implemented checks include:
-
-- Null value filling with column averages
-- Duplicate detection and removal
-- Schema validation during Bronze ingestion
-- S3 file existence check before ingestion
-- Row count checks per layer
-
-Alerts and logs are monitored using:
-
-- Airflow task logs
-- Databricks Jobs logs
-- AWS S3 access logs
+Output size: **~47K rows per table**
 
 ---
 
-Project Folder Structure
+### Gold Layer (Analytics Data)
 
-## 📁 Project Folder Structure
+**Purpose**
+Generate **business-ready datasets** for dashboards.
+
+**Includes**
+
+* **Dimension Tables** (topic, country, user)
+* **Fact Tables** (tweets, trends)
+* **Aggregations** (sentiment, influence)
+* **Metrics Tables** (KPIs, trends, distributions)
+
+---
+
+## Pipeline Orchestration
+
+Orchestrated using **Apache Airflow DAGs**
+
+### Tasks
+
+* Bronze ingestion
+* Silver transformation
+* Gold aggregation
+
+Runs **daily at midnight**
+
+---
+
+## Data Quality Checks
+
+* Null handling using averages
+* Duplicate removal
+* Schema validation
+* S3 file existence checks
+* Row count validation
+
+Monitoring via:
+
+* **Airflow logs**
+* **Databricks logs**
+* **AWS S3 logs**
+
+---
+
+## Project Folder Structure
 
 ```
 Real-Time-Social-Media-Sentiment-Analysis-Pipeline
@@ -205,147 +174,109 @@ Real-Time-Social-Media-Sentiment-Analysis-Pipeline
 └── README.md
 ```
 
-
 ---
 
-Pipeline Execution Flow
+## Analytics Dashboards
 
-bronze_pipeline.py
-        ↓
-silver_pipeline.py
-        ↓
-gold_pipeline.py
-        ↓
-gold_metrics.py
-
-The socialmedia_pipeline_dag.py orchestrates the entire pipeline.
-
----
-
-Technologies Used
-
-- Python
-- PySpark
-- Databricks
-- Delta Lake
-- AWS S3
-- AWS Glue
-- Apache Airflow
-- Unity Catalog
-- Databricks SQL
-- Git and GitHub
-
----
-
-Installation
-
-Clone the repository:
-
-git clone https://github.com/perurisiri/Real-Time-Social-Media-Sentiment-Analysis-Pipeline.git
-cd Real-Time-Social-Media-Sentiment-Analysis-Pipeline
-
-Install dependencies:
-
-pip install -r requirements.txt
-
----
-
-Running the Pipeline
-
-Run the pipeline via Databricks Jobs:
-
-1. Upload notebooks to Databricks workspace
-2. Create a Job with three tasks: bronze_pipeline → silver_pipeline → gold_pipeline
-3. Set cluster to realtime-cluster
-4. Enable daily schedule
-
-Or trigger manually via Airflow:
-
-airflow dags trigger socialmedia_pipeline_dag
-
----
-
-Analytics Dashboards
-
-This section contains dashboards generated from the Gold layer dataset.
-
-Tweet Activity
-Analyzes tweet activity patterns across hourly, daily, and weekly dimensions including impressions, engagement mix, and total vs valid tweet volume.
 ### Tweet Activity
+
 ![Tweet Dashboard](Dashboard/images/tweet_dashboard.png)
 
-Sentiment analysis
-Examines dominant sentiment distribution and score trends across key topics — AI, Cloud, Finance, and Sports.
 ### Sentiment Analysis
+
 ![Sentiment Dashboard](Dashboard/images/sentiment_dashboard.png)
 
-
-Trend analysis
-Tracks tweet trend strength categories, sentiment index, and volume patterns across multiple countries over time.
 ### Trend Analysis
+
 ![Trend Dashboard](Dashboard/images/trend_dashboard.png)
 
-Users and influence
-Analyzes user demographics, follower segments, influence score distribution, and engagement behavior across countries.
 ### Users & Influence
+
 ![Users Dashboard](Dashboard/images/users_influence_dashboard.png)
 
-Overview
-Provides a high-level summary of tweet volume, user distribution, sentiment breakdown, engagement trends, and top topics for Jan 2025.
 ### Overview
+
 ![Overview Dashboard](Dashboard/images/overview_dashboard.png)
 
 ---
 
-Business Insights Generated
+## Business Insights
 
-The pipeline enables several social media analytics insights.
-
-Sentiment Analysis
-Identify positive, negative, and neutral tweet patterns per topic over time.
-
-User Influence Rankings
-Determine top influencers based on engagement score.
-
-Topic Performance
-Identify which topics generate the highest engagement and impressions.
-
-Geographic Trends
-Analyze which countries lead in tweet volume and trend scores.
-
-Data Quality Monitoring
-Track valid vs invalid tweet distribution across all layers.
-
-Hourly Activity Patterns
-Identify peak hours for social media activity per topic.
+* **Sentiment Analysis** → Track sentiment trends per topic
+* **User Influence** → Identify top influencers
+* **Topic Performance** → Measure engagement per topic
+* **Geographic Trends** → Country-level insights
+* **Data Quality Monitoring** → Valid vs invalid tweets
+* **Peak Activity Analysis** → Identify active hours
 
 ---
 
-Future Enhancements
+## Technologies Used
 
-- Integrate real-time streaming ingestion using Kafka or Kinesis
-- Build machine learning sentiment classification models
-- Create advanced Power BI and Tableau dashboards
-- Implement automated data quality monitoring
-- Expand to additional social media platforms
+* Python
+* PySpark
+* Databricks
+* Delta Lake
+* AWS S3
+* AWS Glue
+* Apache Airflow
+* Unity Catalog
+* Databricks SQL
+* Git and GitHub
 
 ---
 
-License
+## Installation
 
-This project is developed for educational and research purposes.
+```bash
+git clone https://github.com/perurisiri/Real-Time-Social-Media-Sentiment-Analysis-Pipeline.git
+cd Real-Time-Social-Media-Sentiment-Analysis-Pipeline
+pip install -r requirements.txt
+```
 
 ---
 
-Author
+## Running the Pipeline
+
+### Databricks
+
+1. Upload notebooks
+2. Create Job (Bronze → Silver → Gold)
+3. Use cluster: `realtime-cluster`
+4. Schedule daily
+
+### Airflow
+
+```bash
+airflow dags trigger socialmedia_pipeline_dag
+```
+
+---
+
+## Future Enhancements
+
+* Real-time streaming (Kafka / Kinesis)
+* Machine learning sentiment models
+* Advanced BI dashboards (Power BI / Tableau)
+* Automated data quality monitoring
+* Multi-platform integration
+
+---
+
+## License
+
+This project is for **educational and research purposes**.
+
+---
+
+## Author
 
 Project Lead
 Sahana P
 
 Team Members
-- Sahana P
-- Gullanki Vara Naga Sai Sree 
-- Subhadip sasmal
-- Peruri Sireesha
 
-
+* Sahana P
+* Gullanki Vara Naga Sai Sree
+* Subhadip Sasmal
+* Peruri Sireesha
