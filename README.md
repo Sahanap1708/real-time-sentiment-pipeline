@@ -1,25 +1,16 @@
-# Real-Time Social Media Analytics Pipeline (Databricks + PySpark)
+# Real-Time Social Media Analytics Pipeline (AWS + Databricks + DBT + PySpark + Airflow)
 
 ---
 
-## Project Overview
+## Project Objective
 
-This project implements a scalable end-to-end data pipeline for social media analytics using:
+This project implements an end-to-end data pipeline for social media analytics using:
 
-AWS • Databricks • PySpark • Delta Lake • Apache Airflow
+AWS • Databricks • PySpark • Delta Lake • Apache Airflow • DBT
 
-The pipeline is designed using the Medallion Architecture (Bronze → Silver → Gold) to transform raw data into analytics-ready datasets.
+The pipeline follows the Medallion Architecture (Bronze → Silver → Gold) to transform raw data into analytics-ready datasets.
 
-It supports both:
-
-* Batch processing (S3 + Glue)
-* Near real-time streaming (Amazon Kinesis)
-
-The goal is to generate actionable insights from social media data, enabling sentiment tracking, trend analysis, and user behavior understanding.
-
----
-
-## Key Business Outputs
+### Key Business Outputs
 
 * Sentiment trend analysis (Positive / Negative / Neutral)
 * User influence rankings based on engagement score
@@ -30,7 +21,7 @@ The goal is to generate actionable insights from social media data, enabling sen
 
 ---
 
-## Dataset
+## Datasets
 
 ### Source
 
@@ -45,24 +36,23 @@ The goal is to generate actionable insights from social media data, enabling sen
 * user_metadata_tb → User data
 * valid_tb → Validated tweets
 
-Each dataset contains approximately 50,500 records.
+Each dataset contains ~50,500 records
 
 ---
 
-## Architecture
+## Lakehouse Architecture
 
 The pipeline integrates:
 
-* AWS S3 (Storage)
-* AWS Glue (Metadata)
-* Amazon Kinesis (Streaming)
+* AWS (S3, Glue)
 * Databricks (Processing)
-* Delta Lake (Storage Layer)
-* Apache Airflow (Orchestration)
+* Delta Lake
+* Airflow (Orchestration)
+* DBT (Transformations)
 
-### Architecture Diagram
+### End-to-End Architecture
 
-![Architecture](Dashboard/images/architecture.png)
+![Architecture Diagram](Dashboard/images/architecture.png)
 
 ---
 
@@ -70,61 +60,100 @@ The pipeline integrates:
 
 ### Bronze Layer (Raw Data)
 
-* Ingests raw data from S3/Kinesis
-* Maintains original data without transformation
-* Adds ingestion timestamp
-* Ensures data lineage and traceability
+**Purpose**
+
+* Store raw data from S3
+* Maintain data lineage
+* Enable traceability
+
+**Operations**
+
+* Parquet ingestion from AWS S3
+* Schema validation
+* Metadata via AWS Glue
+* Add ingested_at timestamp
 
 ---
 
 ### Silver Layer (Cleaned Data)
 
-* Data cleaning and standardization
-* Handles missing values
-* Removes duplicates
-* Applies schema validation
-* Enriches data (topic, country)
+**Purpose**
 
-Output size: ~47K records per dataset
+* Clean and standardize datasets
+* Handle missing values
+* Ensure analytics-ready quality
+
+**Transformations**
+
+* Timestamp parsing
+* Null handling using averages
+* Column cleaning
+* Duplicate removal
+* Data enrichment (topic & country filling)
+
+Output size: ~47K rows per table
 
 ---
 
 ### Gold Layer (Analytics Data)
 
-* Business-ready datasets
-* Fact and dimension tables
-* Aggregated metrics and KPIs
+**Purpose**
+Generate business-ready datasets for dashboards.
 
-### Star Schema (Gold Layer)
+**Includes**
 
-![Star Schema](Dashboard/images/data_model.svg)
+* Dimension Tables (topic, country, user)
+* Fact Tables (tweets, trends)
+* Aggregations (sentiment, influence)
+* Metrics Tables (KPIs, trends, distributions)
+
+### DBT Transformations (Gold Layer)
+
+DBT is used in the Gold layer to manage transformations and build analytics models.
+
+* Modular SQL-based transformations
+* Creation of fact and dimension tables
+* Data lineage tracking
+* Version-controlled transformations
+* Automated testing for data quality
+
+Example models:
+
+* fact_tweet_sentiment
+* fact_tweet_engagement
+* dim_user
+* dim_topic
+
+### Data Model — Star Schema (Gold Layer)
+
+![Star Schema Gold Layer](Dashboard/images/data_model.svg)
 
 ---
 
-## Pipeline Orchestration
+## Pipeline Orchestration (Airflow)
 
-Managed using Apache Airflow DAGs
+Orchestrated using Apache Airflow DAGs
 
 ### Tasks
 
 * Bronze ingestion
 * Silver transformation
-* Gold aggregation
+* Gold aggregation (DBT models)
 
-Runs daily at midnight with monitoring and retry mechanisms.
+Runs daily at midnight
 
 ### Airflow DAG
 
-![Airflow](Dashboard/images/airflow.jpeg)
+![Airflow DAG](Dashboard/images/airflow.jpeg)
 
 ---
 
 ## Data Quality Checks
 
-* Schema validation
 * Null handling using averages
 * Duplicate removal
-* File existence checks (S3)
+* Schema validation
+* S3 file existence checks
 * Row count validation
 
 Monitoring via:
@@ -135,7 +164,25 @@ Monitoring via:
 
 ---
 
-## Project Structure
+## Alerts and Monitoring
+
+The pipeline includes alerting mechanisms to ensure reliability and quick issue detection.
+
+* Airflow task failure alerts
+* Job retry notifications
+* Data quality failure alerts
+* Missing data or delayed pipeline alerts
+* Threshold-based alerts (sudden drop/spike in tweet volume)
+
+Alerts can be configured using:
+
+* Airflow email alerts
+* Databricks job notifications
+* CloudWatch (for AWS services)
+
+---
+
+## Project Folder Structure
 
 ```
 Real-Time-Social-Media-Sentiment-Analysis-Pipeline
@@ -177,35 +224,25 @@ Real-Time-Social-Media-Sentiment-Analysis-Pipeline
 
 ## Analytics Dashboards
 
-These dashboards provide insights into sentiment trends, user behavior, and topic performance.
+### Overview
 
-### Overview Dashboard
+![Overview Dashboard](Dashboard/images/overview_dashboard.png)
 
-![Overview](Dashboard/images/overview_dashboard.png)
+### Tweet Activity
 
----
+![Tweet Dashboard](Dashboard/images/tweet_dashboard.png)
 
-### Tweet Activity Dashboard
+### Sentiment Analysis
 
-![Tweet Activity](Dashboard/images/tweet_dashboard.png)
+![Sentiment Dashboard](Dashboard/images/sentiment_dashboard.png)
 
----
+### Trend Analysis
 
-### Sentiment Analysis Dashboard
+![Trend Dashboard](Dashboard/images/trend_dashboard.png)
 
-![Sentiment](Dashboard/images/sentiment_dashboard.png)
+### Users & Influence
 
----
-
-### Trend Analysis Dashboard
-
-![Trend](Dashboard/images/trend_dashboard.png)
-
----
-
-### User Influence Dashboard
-
-![Users](Dashboard/images/users_influence_dashboard.png)
+![Users Dashboard](Dashboard/images/users_influence_dashboard.png)
 
 ---
 
@@ -228,8 +265,8 @@ These dashboards provide insights into sentiment trends, user behavior, and topi
 * Delta Lake
 * AWS S3
 * AWS Glue
-* Amazon Kinesis
 * Apache Airflow
+* DBT
 * Unity Catalog
 * Databricks SQL
 * Git and GitHub
@@ -250,10 +287,10 @@ pip install -r requirements.txt
 
 ### Databricks
 
-* Upload notebooks
-* Create jobs (Bronze → Silver → Gold)
-* Use cluster: realtime-cluster
-* Schedule execution
+1. Upload notebooks
+2. Create Job (Bronze → Silver → Gold)
+3. Use cluster: realtime-cluster
+4. Schedule daily
 
 ### Airflow
 
@@ -265,10 +302,10 @@ airflow dags trigger socialmedia_pipeline_dag
 
 ## Future Enhancements
 
-* Full real-time streaming (Kafka/Kinesis)
+* Real-time streaming (Kafka / Kinesis)
 * Machine learning sentiment models
-* Advanced dashboards (Power BI / Tableau)
-* Automated alerting system
+* Advanced BI dashboards (Power BI / Tableau)
+* Automated data quality monitoring
 * Multi-platform integration
 
 ---
@@ -281,17 +318,13 @@ This project is for educational and research purposes.
 
 ## Author
 
-Sahana P (Team Lead)
+Project Lead
 
-### Team Members
+Sahana P
+
+Team Members
 
 * Sahana P
 * Gullanki Vara Naga Sai Sree
 * Subhadip Sasmal
 * Peruri Sireesha
-
----
-
-## Original Team Repository
-
-https://github.com/perurisiri/Real-Time-Social-Media-Sentiment-Analysis-Pipeline
