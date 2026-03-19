@@ -62,7 +62,7 @@ The pipeline integrates:
 
 ### Architecture Diagram
 
-![Architecture](Dashboard/images/final-arch.png)
+![Architecture](Dashboard/images/architecture.png)
 
 ---
 
@@ -97,7 +97,7 @@ Output size: ~47K records per dataset
 
 ### Star Schema (Gold Layer)
 
-![Star Schema](Dashboard/images/star_schema_gold_layer.svg)
+![Star Schema](Dashboard/images/data_model.svg)
 
 ---
 
